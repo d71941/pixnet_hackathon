@@ -1,8 +1,8 @@
 import datetime, os, json, urllib2, time, sys
 
 LOCATION_PATH = "locations.json"
+KEY_PATH = "keys.json"
 
-WEATHER_API_KEY = "6njjq5q6dcph9h4exchreeu5"
 WEATHER_API_URL = "http://api.worldweatheronline.com/premium/v1/past-weather.ashx"
 
 def load_locations(location_path):
@@ -22,13 +22,19 @@ def get_weather(weather_date, weather_location, key):
 	return response.read()
 
 
+def load_keys():
+	key_file = open(KEY_PATH)
+	keys = json.load(key_file)
+	return keys
+
 ########################################################
 
 begin = int(sys.argv[1])
 end = int(sys.argv[2])
-key = sys.argv[3]
 
 locations = load_locations(LOCATION_PATH)
+keys = load_keys()
+key_index = 0
 
 for l in locations[begin:end+1]:
 	print "Getting weather data for %s..." % (l["name"].encode('utf8'))
@@ -44,12 +50,14 @@ for l in locations[begin:end+1]:
 			weather_date = weather_date + datetime.timedelta(1)
 			continue
 
-		json_string = get_weather(weather_date, l, key)
+		json_string = get_weather(weather_date, l, keys[key_index]['key'])
 		if json_string:
 			f = open(file_path, "w")
 			f.write(json_string)
 			f.close()
 			weather_date = weather_date + datetime.timedelta(1)
+		else:
+			key_index = (key_index + 1) % len(keys)
 
 		time.sleep(0.2)
 

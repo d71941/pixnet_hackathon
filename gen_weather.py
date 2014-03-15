@@ -14,7 +14,7 @@ def load_locations(location_path):
 
 def get_weather(weather_date, weather_location, key):
 	try:
-		response = urllib2.urlopen("%s?q=%f,%f&date=%s&key=%s&format=json" % (WEATHER_API_URL, weather_location['lat'], weather_location['lon'], weather_date.strftime("%Y-%m-%d") ,key))
+		response = urllib2.urlopen("%s?q=%f,%f&date=%s&key=%s&format=json" % (WEATHER_API_URL, weather_location['lat'], weather_location['lon'], weather_date.strftime("%Y-%m-%d") ,key), timeout=5)
 	except:
 		print "Can't get %s/%s.json" % (l["name"].encode('utf8'), weather_date.strftime("%Y-%m-%d"))
 		return None;
@@ -59,7 +59,8 @@ for l in locations[begin:end+1]:
 		else:
 			key_index = (key_index + 1) % len(keys)
 
-		time.sleep(0.2)
+		print "."
+		time.sleep(1)
 
 
 '''

@@ -21,6 +21,13 @@ def get_weather(weather_date, weather_location, key):
 
 	return response.read()
 
+def check_weather(weather_date, weather_location, data):
+	if data["data"]["weather"][0]["date"] != weather_date.strftime("%Y-%m-%d"):
+		print "Wrong date!!"
+		return False
+	return True
+
+
 
 def load_keys():
 	key_file = open(KEY_PATH)
@@ -62,10 +69,31 @@ for l in locations[begin:end+1]:
 		print "."
 		time.sleep(1)
 
+weather_of_locations = []
 
-'''
-if not os.path.exists(locations[0]["name"].encode('utf8')):
-    os.makedirs(locations[0]["name".encode('utf8')])
-f = open(locations[0]["name"].encode('utf8')+'/'+weather_date.strftime("%Y-%m-%d")+".json", "w")
-f.write(json)
-'''
+for l in locations[begin:end+1]:
+	print "Checking weather data for %s..." % (l["name"].encode('utf8'))
+
+	weather_date = datetime.date(2013, 01, 01)
+	weather_of_days = []
+	while weather_date < datetime.date(2014, 01, 01):
+
+		file_path = l["name"].encode('utf8')+'/'+weather_date.strftime("%Y-%m-%d")+".json"
+
+		f = open(file_path, "r")
+		data = json.load(f)
+		f.close()
+
+		if check_weather(weather_date, l, data) == False:
+			print "filePath = " + file_path
+			exit(0)
+
+		weather_of_days.append(data["data"]["weather"][0])
+
+		#print (weather_date - datetime.date(2013,01,01)).days+1
+
+		weather_date = weather_date + datetime.timedelta(1)
+	weather_of_locations.append(weather_of_days)
+f = open("weathers.json", "w")
+f.write(json.dumps(weather_of_locations))
+f.close()

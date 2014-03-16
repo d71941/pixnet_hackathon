@@ -36,8 +36,9 @@ def load_keys():
 
 ########################################################
 
-begin = int(sys.argv[1])
-end = int(sys.argv[2])
+year = int(sys.argv[1])
+begin = int(sys.argv[2])
+end = int(sys.argv[3])
 
 locations = load_locations(LOCATION_PATH)
 keys = load_keys()
@@ -46,13 +47,14 @@ key_index = 0
 for l in locations[begin:end+1]:
 	print "Getting weather data for %s..." % (l["name"].encode('utf8'))
 
-	if not os.path.exists(l["name"].encode('utf8')):
-		os.makedirs(l["name".encode('utf8')])
+	dir_path = str(year) + '/' + l["name"].encode('utf8')
+	if not os.path.exists(dir_path):
+		os.makedirs(dir_path)
 
-	weather_date = datetime.date(2013, 01, 01)
-	while weather_date < datetime.date(2014, 01, 01):
+	weather_date = datetime.date(year, 01, 01)
+	while weather_date < datetime.date(year+1, 01, 01):
 
-		file_path = l["name"].encode('utf8')+'/'+weather_date.strftime("%Y-%m-%d")+".json"
+		file_path = dir_path + '/' + weather_date.strftime("%Y-%m-%d")+".json"
 		if os.path.exists(file_path):
 			weather_date = weather_date + datetime.timedelta(1)
 			continue
@@ -78,7 +80,7 @@ for l in locations[begin:end+1]:
 	weather_of_days = []
 	while weather_date < datetime.date(2014, 01, 01):
 
-		file_path = l["name"].encode('utf8')+'/'+weather_date.strftime("%Y-%m-%d")+".json"
+		file_path = str(year) + '/' + l["name"].encode('utf8') + '/' + weather_date.strftime("%Y-%m-%d") + ".json"
 
 		f = open(file_path, "r")
 		data = json.load(f)
@@ -94,6 +96,6 @@ for l in locations[begin:end+1]:
 
 		weather_date = weather_date + datetime.timedelta(1)
 	weather_of_locations.append(weather_of_days)
-f = open("weathers.json", "w")
+f = open(str(year) + '/' + "weathers.json", "w")
 f.write(json.dumps(weather_of_locations))
 f.close()

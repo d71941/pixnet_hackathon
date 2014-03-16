@@ -76,9 +76,9 @@ weather_of_locations = []
 for l in locations[begin:end+1]:
 	print "Checking weather data for %s..." % (l["name"].encode('utf8'))
 
-	weather_date = datetime.date(2013, 01, 01)
+	weather_date = datetime.date(year, 01, 01)
 	weather_of_days = []
-	while weather_date < datetime.date(2014, 01, 01):
+	while weather_date < datetime.date(year + 1, 01, 01):
 
 		file_path = str(year) + '/' + l["name"].encode('utf8') + '/' + weather_date.strftime("%Y-%m-%d") + ".json"
 
@@ -92,7 +92,6 @@ for l in locations[begin:end+1]:
 
 		weather_of_days.append(data["data"]["weather"][0])
 
-		#print (weather_date - datetime.date(2013,01,01)).days+1
 
 		weather_date = weather_date + datetime.timedelta(1)
 	weather_of_locations.append(weather_of_days)

@@ -5,16 +5,16 @@ WEATHER_PATH = "weathers.json"
 ALBUM_PATH = "album_location"
 ALBUM_WEATHER_PATH = "album_weather"
 
-def get_weather_for_photo(weather_data, photo):
+def get_weather_for_photo(year, weather_data, photo):
 		#print "id = %s" % (photo["id"])
 
 		location_index = photo["location"]["city"]
 		photo_datetime = datetime.datetime.fromtimestamp(int(photo["taken_at"]))
 
-		if photo_datetime.year != 2013:
+		if photo_datetime.year != year:
 			return None
 
-		day_of_year = (photo_datetime.date() - datetime.date(2013, 01, 01)).days
+		day_of_year = (photo_datetime.date() - datetime.date(year, 01, 01)).days
 		mintue_of_day = photo_datetime.hour*60 + photo_datetime.minute
 		#print photo_datetime
 		#print mintue_of_day
@@ -66,7 +66,7 @@ for filename in os.listdir(ALBUM_PATH + "/"):
 	category_valid = 0
 	output_photos = []
 	for photo in photo_data:
-		weather = get_weather_for_photo(weather_data, photo)
+		weather = get_weather_for_photo(year, weather_data, photo)
 		if(weather):
 			#print weather
 			photo["weather"] = weather
